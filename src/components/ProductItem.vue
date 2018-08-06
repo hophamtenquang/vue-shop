@@ -1,6 +1,6 @@
 <template lang="html">
   <div style="margin-bottom: 10px">
-    <img class="col-sm-12" src="/static/product.jpg" alt="">
+    <img class="col-sm-12" :src="product.productImage" alt="">
     <h4>{{ product.name }}</h4>
     <p>{{ product.description }}</p>
     <p class="" style="color: blue">${{ product.price }}</p>

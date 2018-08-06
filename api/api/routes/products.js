@@ -36,8 +36,10 @@ router.post("/", upload.single('productImage'), ProductsController.products_crea
 
 router.get("/:productId", ProductsController.products_get_product);
 
-router.patch("/:productId", checkAuth, ProductsController.products_update_product);
+router.patch("/:productId", ProductsController.products_update_product);
 
-router.delete("/:productId", checkAuth, ProductsController.products_delete);
+router.put("/bulkUpdate", ProductsController.products_bulk_update_product);
+
+router.delete("/:productId", ProductsController.products_delete);
 
 module.exports = router;

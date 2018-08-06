@@ -15,7 +15,7 @@ mongoose.connect(
   {
     useMongoClient: true
   }
-);
+); 
 mongoose.Promise = global.Promise;
 
 console.log(process.env.MONGO_ATLAS_PW);

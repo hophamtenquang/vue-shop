@@ -2,6 +2,8 @@ const mongoose = require("mongoose");
 
 const Order = require("../models/order");
 const Product = require("../models/product");
+const OrderProduct = require("../models/order_product");
+const OrderProductsController = require('../controllers/order_product');
 
 exports.orders_get_all = (req, res, next) => {
   Order.find()
@@ -32,28 +34,25 @@ exports.orders_get_all = (req, res, next) => {
 };
 
 exports.orders_create_order = (req, res, next) => {
-  Product.findById(req.body.productId)
-    .then(product => {
-      if (!product) {
-        return res.status(404).json({
-          message: "Product not found"
-        });
-      }
-      const order = new Order({
-        _id: mongoose.Types.ObjectId(),
-        quantity: req.body.quantity,
-        product: req.body.productId
-      });
-      return order.save();
-    })
+    const products = req.body.products; 
+    const order = new Order({
+      _id: mongoose.Types.ObjectId(),
+      customer: req.body.customer,
+      address: req.body.address,
+      total: req.body.total,
+    });
+    console.log("order", order)
+    order.save()
     .then(result => {
-      console.log(result);
+      OrderProductsController.create_order_products(result._id, products)
       res.status(201).json({
         message: "Order stored",
         createdOrder: {
           _id: result._id,
-          product: result.product,
-          quantity: result.quantity
+          customer: result.customer,
+          address: result.address,
+          total: result.total,
+          products: products
         },
         request: {
           type: "GET",
@@ -68,6 +67,23 @@ exports.orders_create_order = (req, res, next) => {
       });
     });
 };
+
+
+exports.orders_create_order_products = (req, res, next) => {
+  let products = req.body.products;
+  let order = req.body.order;
+
+  products.forEach(function(product) {
+    let order_products = new OrderProduct({
+      order: order,
+      product: product.id,
+      price: product.price,
+      quantity: product.quantity,
+    });
+    order.save()
+  });
+};
+
 
 exports.orders_get_order = (req, res, next) => {
   Order.findById(req.params.orderId)

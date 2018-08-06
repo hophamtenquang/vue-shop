@@ -12,7 +12,7 @@ exports.products_get_all = (req, res, next) => {
           return {
             name: doc.name,
             price: doc.price,
-            productImage: doc.productImage,
+            productImage: "http://localhost:3000/" + doc.productImage,
             id: doc._id,
             inventory: doc.inventory,
             quantity: doc.quantity,
@@ -141,4 +141,26 @@ exports.products_delete = (req, res, next) => {
         error: err
       });
     });
+};
+
+exports.products_bulk_update_product = (req, res, next) => {
+  const products = req.body.products;
+  products.forEach(product => {
+    product.productImage = 'uploads/' + product.productImage.split('/uploads/')[1]
+    product.quantity = 1;
+    Product.update({ _id: product.id }, { $set: product })
+      .exec()
+      .then(result => {
+        console.log(result)
+      })
+      .catch(err => {
+        console.log(err);
+        res.status(500).json({
+          error: err
+        });
+      });
+  });
+  res.status(200).json({
+    message: "Products updated",
+  });
 };
